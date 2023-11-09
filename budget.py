@@ -6,23 +6,23 @@ class Category:
     def __init__(self, category):
         self.category = category
         self.ledger = []
+        
+    def check_funds(self, amount:float):
+        if amount > self.get_balance():
+            return False
+        else:
+            return True
+        
     # Se guardan la cantidad y la descrición como diccionario dentro de la lista
     def deposit(self, amount:float, description:str = ''):
         self.ledger.append({'amount': amount, 'description': description})
     
     def withdraw(self, amount:float, description:str = ''):
-        saldo:float = 0
-        # Si la lista está vacía, entonces no hay fondos para retirar
-        if len(self.ledger) == 0:
-            return False
-        # Se suma el amount de cada elemento de la lista para obtener el saldo
-        for x in self.ledger:
-            saldo = saldo + x['amount']
-        # Se verifica que el amount que se va a retirar sea menor al saldo
-        if (saldo - amount) < 0:
+        # Si no hay suficientes fondos, se retorna False
+        if self.check_funds(amount) == False:
             return False
         else:
-            # Se multiplica el amount por -1  porqu es retiro
+            # Se multiplica el amount por -1  porque es retiro
             self.ledger.append({'amount': (amount * -1), 'description': description})
             return True
     
@@ -38,7 +38,7 @@ class Category:
     
     # Pide como argumento el amount y el objeto al que va a ser hecho el depósito
     def transfer(self, amount:float, category):
-        # Primero se valida que se pueda hacer el retiro comprobando la cantidad a  transferir
+        # Primero se valida que se pueda hacer el retiro comprobando la cantidad a transferir
         if self.withdraw(amount, 'Transfer to '+category.category) == False:
             return False
         else:
