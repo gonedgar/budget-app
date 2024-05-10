@@ -99,11 +99,41 @@ class Category:
         return str(mostrar)
     
 def create_spend_chart(categories:list):
+    import re
     # Se crea la variable bar_chart en la que se guardará toda la cadena de texto que compondrá la gráfica
     # obviamente comienza por el texto 'Percentage spent by category' que se mostrarà siempre al principio
     bar_chart = 'Percentage spent by category\n'
     # Variable en la que se guardan las categorías y se va sumando el monto gastado para obtener el total de cada categoría
-    gastos = []
+    montos = []
     # Primero se obtiene la cantidad total de gastos (withdrawals) para poder obtener los porcentajes
+    
+    # Para cada objeto category en la lista de objetos categories
+    for x in categories:
+        # Variable para ir sumando los gastos de cada objeto, sin tomar en cuentra los que comienzan con 'Transfer'
+        feria:float = 0.0
+        # Para cada elemento de la lista en el ledger
+        for y in x.ledger:
+            # Si el amount del diccionario es menor a cero (o sea, si hubo un withdrawal o transfer)
+            if float(y['amount']) < 0:
+                # Si la description no es un transfer
+                if y['description'][:8] != 'Transfer':
+                    # Se suma la cantidad a feria (se multiplica por -1 para hacerla positiva)
+                    feria += float(y['amount'] * -1)
+        # Al terminar de recorrer cada diccionario en la lista, se almacenan la feria (total de withdrawals) y la category en un diccionario en la lista montos
+        montos.append({'amount': feria, 'category': x.category})
+
+        # Se declara la variable para guardar la suma de gastos de todas las categorías para poder calcular los porcentajes
+        total:float = 0
+        # Se declara la variable para guardar la lista de diccionarios con los porcentajes de cada categoría
+        porcentajes = []
+        # Para cada elemento de la lista montos
+        for x in montos:
+            # Se suma el amount al total
+            total = total + x['amount']
+    
+    # Para cada elemento de la lista montos    
+    for x in montos:
+        # Se crea un diccionario que guarda el porcentaje (cantidad por cien entre total) y la categoría
+        porcentajes.append({'amount': (x['amount'] * 100)/total, 'category': x['category']})
     
     return bar_chart
