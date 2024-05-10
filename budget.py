@@ -39,7 +39,7 @@ class Category:
     # Pide como argumento el amount y el objeto al que va a ser hecho el depósito
     def transfer(self, amount:float, category):
         # Primero se valida que se pueda hacer el retiro comprobando la cantidad a transferir
-        if self.withdraw(amount, 'Transfer to '+category.category) == False:
+        if self.withdraw(amount, 'Transfer to '+ category.category) == False:
             return False
         else:
             # Se llama el método deposit del objeto al que se le hace la transferencia
