@@ -60,19 +60,21 @@ def print_category(Category):
     # Segundo loop para concatenar los * de la derecha a la cadena anterior
     for x in range(dots):
         title = title + '*'
-    # Si el título es menor a 30, se añade un * al final para que sea 30
-    if len(title) < 30:
-        title = title + '*'
+        # Si el título es menor a 30, se añade un * al final para que sea 30
+        if len(title) < 30:
+            title = title + '*'
     # Se imprime el título
-    print(title)
+    print(title) # <----------------------------------------------------------------------------------------
     # Loop para imprimir cada elemento de la lista
     for x in Category.ledger:
         # Se obtiene la longitud de la cantidad junto con el signo (si es negativo) y dos espacios decimales
-        cantidad = len(str("{a:.2f}").format(a = x['amount']))
+        monto = float(str("{a:.2f}").format(a = x['amount']))
+        cantidad = len(str(monto))
         # Se obtiene la longitud de la descripción
         descripcion = len(x['description'])
-        # Si la descripción es mayor a 23
+        # Se suma (o resta si es negativa) la cantidad al total
         total = total + x['amount']
+        # Si la descripción es mayor a 23
         if descripcion > 23:
             # La descripción se acorta a 23 y se concatena al inicio de la string
             imprimir = '' + x['description'][:23]
@@ -80,7 +82,7 @@ def print_category(Category):
             for y in range((30 - cantidad) - 23):
                 imprimir = imprimir + ' '
             # Se concatena el amount formateado con dos decimales
-            imprimir = imprimir + str("{a:.2f}").format(a = x['amount'])
+            imprimir = imprimir + str(monto)
             # Se imprime el amount en consola
             print(imprimir)
         # Si la descripción no es mayor a 23
@@ -91,8 +93,19 @@ def print_category(Category):
             for y in range((30 - cantidad) - descripcion):
                 imprimir = imprimir + ' '
             # Se concatena el amount formateado con dos decimales
-            imprimir = imprimir+str("{a:.2f}").format(a = x['amount'])
+            imprimir = imprimir+str(monto)
             # Se imprime el amount en consola
             print(imprimir)
     
     print("Total:{a: .2f}".format(a = total))
+    
+def create_spend_chart(categories:list):
+    # Se crea la variable bar_chart en la que se guardará toda la cadena de texto que compondrá la gráfica
+    # obviamente comienza por el texto 'Percentage spent by category' que se mostrarà siempre al principio
+    bar_chart = 'Percentage spent by category\n'
+    # Variable en la que se guardan las categorías y se va sumando el monto gastado para obtener el total de cada categoría
+    gastos = []
+    # Primero se obtiene la cantidad total de gastos (withdrawals) para poder obtener los porcentajes
+    
+    
+    return bar_chart
