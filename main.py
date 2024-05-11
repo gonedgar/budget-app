@@ -32,4 +32,4 @@ print(hygiene)
 # print(food.category+" balance:",food.get_balance())
 # print(food.category+':',food.ledger)
 categories = [food, clothing, videogames, hygiene]
-create_spend_chart(categories)
+print(create_spend_chart(categories))

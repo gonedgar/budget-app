@@ -94,7 +94,7 @@ class Category:
                 # Se concatena el amount formateado con dos decimales a la variable mostrar que guarda la cadena de texto que se retorna al final
                 mostrar = mostrar + (imprimir + str(monto)) + '\n'
     
-        mostrar = mostrar + "Total:{a: .2f}".format(a = total)
+        mostrar = mostrar + "Total:{a: .2f}".format(a = total) + "\n"
         
         return str(mostrar)
     
@@ -136,4 +136,70 @@ def create_spend_chart(categories:list):
         # Se crea un diccionario que guarda el porcentaje (cantidad por cien entre total) y la categoría
         porcentajes.append({'amount': (x['amount'] * 100)/total, 'category': x['category']})
     
+    # Las once posiciones verticales que serán los valores del 0 al 100
+    rango = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    
+    # Para cada valor en la lista rango (generar diez líneas de texto)
+    for x in rango:
+        # Si x * 10 es 100, entonces el 100 se transforma en string y se concatena a la cadena final + |
+        if x * 10 == 100:
+            bar_chart = bar_chart + str(x * 10) + "|"
+        # Si x * 10 está entre 10 y 99, se concatena un espacio " " + el valor transformado en string + |
+        elif x * 10 > 9:
+            bar_chart = bar_chart + " " + str(x * 10) + "|"
+        # Si no es nada de eso, o sea que está entre 0 y 9, se concatenan dos espacios "  " + el valor transformado en string + |
+        else:
+            bar_chart = bar_chart + "  " + str(x) + "|"
+        
+        # Para cada elemento diccionario en la lista porcentajes    
+        for y in porcentajes:
+            # Si el amount es mayor o igual o superior a la línea de texto que corresponde a x * 10, entonces se pone una o (" o ")
+            if y["amount"] >= x * 10:
+                bar_chart = bar_chart + " o "
+            # Si el amount no llega a ser igual o superior a la línea de texto que corresponde a x * 10, entonces se ponen solo tres espacios ("   ")
+            else:
+                bar_chart = bar_chart + "   "
+
+        # Al final se pone un salto de línea
+        bar_chart = bar_chart + "\n"
+    
+    # Comienza la segunda parte de la gráfica, las líneas horizontales ------
+    # Primero se ponen cuatro espacios en la línea que van antes de las líneas horizontales
+    bar_chart = bar_chart + "    "
+    
+    # Ahora se ponen tres espacios por cada elemento diccionario que haya en la lista porcentajes
+    for x in porcentajes:
+        bar_chart = bar_chart + "---"
+    
+    # Por requisito se pide que haya un guion más al final, por eso se concatena aquí
+    bar_chart = bar_chart + "-"
+    
+    # Variable que guarda la longitud de la categoría con más caracteres, o sea la mayor
+    mayor:int = 0
+    
+    # Aquí se comparan las longitudes de las diversas categorías en los diccionarios que forman parte de la lista porcentajes
+    # Se guarda el valor de la longitud más grande, lo que dicta la cantidad de líneas para escribir los nombres de las
+    # categorías de manera vertical
+    for x in range(len(porcentajes) - 1):
+        if len(porcentajes[x]['category']) > len(porcentajes[x+1]['category']):
+            mayor = len(porcentajes[x]['category'])
+        else:
+            mayor = len(porcentajes[x+1]['category'])
+    
+    # La longitud de la categoría con más caracteres es la que dictamina el número de líneas a generar
+    # Para x cantidad de veces (cantidad de líenas)
+    for x in range(mayor):
+        # Al principio de cada línea, siempre van cuatro espacios "    "
+        bar_chart = bar_chart + "\n    "
+        # Para cada elemento diccionario en la lista porcentajes
+        for y in porcentajes:
+            # Si el valor actual de x en el loop es menor o igual a la longitud de la categoría del elemento diccionario actual
+            if x + 1 <= len(y['category']):
+                # Se concatena a bar_chart un espacio + el caracter de la categoría en la posición x + otro espacio
+                bar_chart = bar_chart + " " + y['category'][x] + " "
+            # Si no, se concatenan tres espacios, ya que la categoría del elemento diccionario actual ya se imprimió totalmente
+            else:
+                bar_chart = bar_chart + "   "
+                
+    # Ahora ya se tiene la larguísima cadena de texto que contiene la grafica ya formada y se devuelve como valor de retorno
     return bar_chart
