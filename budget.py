@@ -70,31 +70,44 @@ class Category:
         for x in self.ledger:
             # Se obtiene la longitud de la cantidad junto con el signo (si es negativo) y dos espacios decimales
             monto = float(str("{a:.2f}").format(a = x['amount']))
-            cantidad = len(str(monto))
+            if str(monto)[-2:] == ".0":
+                cantidad = len(str(monto)) + 1
+            else:
+                cantidad = len(str(monto))
             # Se obtiene la longitud de la descripción
             descripcion = len(x['description'])
             # Se suma (o resta si es negativa) la cantidad al total
             total = total + x['amount']
             # Si la descripción es mayor a 23
+            
             if descripcion > 23:
                 # La descripción se acorta a 23 y se concatena al inicio de la string
-                imprimir = '' + x['description'][:23]
+                imprimir = x['description'][:23]
                 # Se determinan y concatenan los espacios que se dejan de acuerdo al amount
                 for y in range((30 - cantidad) - 23):
                     imprimir = imprimir + ' '
                 # Se concatena el amount formateado con dos decimales a la variable mostrar que guarda la cadena de texto que se retorna al final
-                mostrar = mostrar + (imprimir + str(monto)) + '\n'
+                if str(monto)[-2:] == ".0":
+                    mostrar = mostrar + (imprimir + (str(monto) + "0")[-7:]) + '\n'
+                else:
+                    mostrar = mostrar + (imprimir + str(monto)[-7:]) + '\n'
             # Si la descripción no es mayor a 23
             else:
                 # Se concatena la descripción tal cual al inicio de la string
-                imprimir = '' + x['description']
+                imprimir = x['description']
                 # Se determinan y concatenan los espacios que se dejan de acuerdo al amount
                 for y in range((30 - cantidad) - descripcion):
                     imprimir = imprimir + ' '
+                if cantidad > 7:
+                    for y in range (cantidad - 7):
+                        imprimir = imprimir + ' '
                 # Se concatena el amount formateado con dos decimales a la variable mostrar que guarda la cadena de texto que se retorna al final
-                mostrar = mostrar + (imprimir + str(monto)) + '\n'
+                if str(monto)[-2:] == ".0":
+                    mostrar = mostrar + (imprimir + (str(monto) + "0")[-7:]) + '\n'
+                else:
+                    mostrar = mostrar + (imprimir + str(monto)) + '\n'
     
-        mostrar = mostrar + "Total:{a: .2f}".format(a = total) + "\n"
+        mostrar = mostrar + "Total:{a: .2f}".format(a = total)
         
         return str(mostrar)
     
@@ -161,7 +174,7 @@ def create_spend_chart(categories:list):
                 bar_chart = bar_chart + "   "
 
         # Al final se pone un salto de línea
-        bar_chart = bar_chart + "\n"
+        bar_chart = bar_chart + " \n"
     
     # Comienza la segunda parte de la gráfica, las líneas horizontales ------
     # Primero se ponen cuatro espacios en la línea que van antes de las líneas horizontales
@@ -200,6 +213,7 @@ def create_spend_chart(categories:list):
             # Si no, se concatenan tres espacios, ya que la categoría del elemento diccionario actual ya se imprimió totalmente
             else:
                 bar_chart = bar_chart + "   "
+        bar_chart = bar_chart + " "
                 
     # Ahora ya se tiene la larguísima cadena de texto que contiene la grafica ya formada y se devuelve como valor de retorno
     return bar_chart
